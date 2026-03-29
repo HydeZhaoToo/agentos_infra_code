@@ -1,0 +1,28 @@
+# =============================================================================
+# AgentOS - Production 环境配置
+# =============================================================================
+
+litellm:
+  replicaCount: 3
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: "2"
+      memory: 2Gi
+
+pgsql-relational:
+  primary:
+    persistence:
+      size: 50Gi
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: "2"
+        memory: 2Gi
+  # Production 建议开启指标监控
+  metrics:
+    enabled: true

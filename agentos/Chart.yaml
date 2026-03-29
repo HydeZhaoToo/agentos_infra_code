@@ -1,0 +1,30 @@
+apiVersion: v2
+name: agentos
+description: AgentOS Infrastructure - Unified Deployment Chart
+version: 0.1.0
+type: application
+
+dependencies:
+  # ---- 本次实现 ----
+  - name: litellm
+    version: "0.1.0"
+    repository: "file://../charts/litellm"
+    condition: litellm.enabled
+
+  - name: postgresql
+    alias: pgsql-relational
+    version: "16.4.1"
+    repository: "file://../charts/postgresql"
+    condition: pgsql-relational.enabled
+
+  # ---- 以下由其他同事实现，暂 disabled ----
+  # - name: postgresql
+  #   alias: pgsql-vector
+  #   version: "16.4.1"
+  #   repository: "file://../charts/postgresql"
+  #   condition: pgsql-vector.enabled
+
+  # - name: obot
+  #   version: "0.1.0"
+  #   repository: "file://../charts/obot"
+  #   condition: obot.enabled

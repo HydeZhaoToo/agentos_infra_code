@@ -1,0 +1,69 @@
+# =============================================================================
+# AgentOS Umbrella Chart - 默认配置
+# =============================================================================
+
+# ---- LiteLLM ----
+litellm:
+  enabled: true
+
+  # 关闭内置 postgresql，使用共享的 pgsql-relational
+  postgresql:
+    enabled: false
+
+  externalDatabase:
+    host: "agentos-pgsql-relational"
+    port: 5432
+    database: "litellm"
+    existingSecret: "pgsql-relational-credentials"
+    existingSecretPasswordKey: "postgres-password"
+
+  replicaCount: 1
+
+  image:
+    repository: docker.litellm.ai/berriai/litellm
+    tag: "main-stable"
+    pullPolicy: IfNotPresent
+
+  service:
+    type: ClusterIP
+    port: 4000
+
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+
+  # LiteLLM 模型配置 - 按需覆盖
+  config: {}
+
+# ---- PostgreSQL 关系数据库 ----
+pgsql-relational:
+  enabled: true
+
+  auth:
+    postgresPassword: ""
+    database: "litellm"
+    existingSecret: "pgsql-relational-credentials"
+
+  primary:
+    persistence:
+      enabled: true
+      size: 20Gi
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        cpu: "1"
+        memory: 1Gi
+
+# ---- PostgreSQL 向量数据库（暂未实现）----
+# pgsql-vector:
+#   enabled: false
+
+# ---- obot（暂未实现）----
+# obot:
+#   enabled: false

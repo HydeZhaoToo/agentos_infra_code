@@ -1,0 +1,25 @@
+# =============================================================================
+# AgentOS - Staging 环境配置
+# =============================================================================
+
+litellm:
+  replicaCount: 2
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+
+pgsql-relational:
+  primary:
+    persistence:
+      size: 10Gi
+    resources:
+      requests:
+        cpu: 200m
+        memory: 512Mi
+      limits:
+        cpu: "1"
+        memory: 1Gi
