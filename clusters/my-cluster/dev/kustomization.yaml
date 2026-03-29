@@ -1,0 +1,55 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../base/git-repo.yaml
+  - ../base/helm-release.yaml
+
+patches:
+  - target:
+      kind: HelmRelease
+      name: agentos
+    patch: |
+      - op: replace
+        path: /metadata/namespace
+        value: dev
+      - op: add
+        path: /spec/targetNamespace
+        value: dev
+      - op: add
+        path: /spec/install
+        value:
+          createNamespace: true
+      - op: add
+        path: /spec/valuesFrom
+        value:
+          - kind: ConfigMap
+            name: agentos-values-dev
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: agentos-values-dev
+  namespace: dev
+data:
+  values.yaml: |
+    litellm:
+      replicaCount: 1
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi
+    pgsql-relational:
+      primary:
+        persistence:
+          size: 5Gi
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi

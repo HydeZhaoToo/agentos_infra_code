@@ -1,0 +1,6 @@
+# FluxCD 组件由 `flux bootstrap` 命令自动生成
+# 此文件为占位，实际使用时运行：
+#   flux bootstrap git \
+#     --url=https://your-git-server.com/agentos_infra_code.git \
+#     --branch=main \
+#     --path=clusters/my-cluster
