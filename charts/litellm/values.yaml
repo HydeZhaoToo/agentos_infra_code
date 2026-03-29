@@ -1,0 +1,52 @@
+replicaCount: 1
+
+image:
+  repository: docker.litellm.ai/berriai/litellm
+  tag: "main-stable"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 4000
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+# 内置 postgresql（umbrella 部署时关闭）
+postgresql:
+  enabled: true
+  auth:
+    database: litellm
+    existingSecret: ""
+
+# 外部数据库配置（postgresql.enabled=false 时生效）
+externalDatabase:
+  host: ""
+  port: 5432
+  database: "litellm"
+  existingSecret: ""
+  existingSecretPasswordKey: "postgres-password"
+
+# LiteLLM 配置
+masterKey: ""
+existingSecret: ""
+
+config: {}
+#  model_list:
+#    - model_name: gpt-4
+#      litellm_params:
+#        model: openai/gpt-4
+#        api_key: os.environ/OPENAI_API_KEY
+
+env: []
+
+ingress:
+  enabled: false
+  className: ""
+  hosts: []
+  tls: []

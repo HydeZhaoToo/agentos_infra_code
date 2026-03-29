@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "litellm.fullname" . }}
+  labels:
+    {{- include "litellm.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "litellm.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "litellm.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 4000
+              protocol: TCP
+          env:
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "litellm.databaseSecretName" . }}
+                  key: {{ .Values.externalDatabase.existingSecretPasswordKey | default "postgres-password" }}
+            - name: DATABASE_URL
+              value: {{ include "litellm.databaseUrl" . | quote }}
+            {{- if .Values.masterKey }}
+            - name: LITELLM_MASTER_KEY
+              value: {{ .Values.masterKey | quote }}
+            {{- else if .Values.existingSecret }}
+            - name: LITELLM_MASTER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.existingSecret }}
+                  key: master-key
+            {{- end }}
+            {{- with .Values.env }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- if .Values.config }}
+          args:
+            - "--config"
+            - "/app/proxy_config.yaml"
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/proxy_config.yaml
+              subPath: config.yaml
+              readOnly: true
+          {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /health/liveliness
+              port: http
+            initialDelaySeconds: 120
+            periodSeconds: 15
+            successThreshold: 1
+            failureThreshold: 3
+            timeoutSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health/readiness
+              port: http
+            initialDelaySeconds: 120
+            periodSeconds: 15
+            successThreshold: 1
+            failureThreshold: 3
+            timeoutSeconds: 10
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- if .Values.config }}
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "litellm.fullname" . }}-config
+      {{- end }}
