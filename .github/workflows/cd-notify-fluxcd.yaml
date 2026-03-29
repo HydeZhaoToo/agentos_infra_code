@@ -1,0 +1,50 @@
+name: CD - Notify FluxCD
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'charts/**'
+      - 'agentos/**'
+      - 'clusters/**'
+
+jobs:
+  notify-fluxcd:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger FluxCD Reconcile
+        run: |
+          # 通过 FluxCD Receiver webhook 触发立即 reconcile
+          # FluxCD Receiver 会生成一个 webhook URL，格式为：
+          #   https://<fluxcd-ingress>/hook/<receiver-token>
+          #
+          # 需要在 GitHub repo Settings > Secrets 中配置：
+          #   FLUXCD_WEBHOOK_URL: FluxCD Receiver 的完整 webhook URL
+          #   FLUXCD_WEBHOOK_TOKEN: webhook 验证 token
+          #
+          # 如果未配置 webhook URL，跳过此步骤
+          if [ -z "${{ secrets.FLUXCD_WEBHOOK_URL }}" ]; then
+            echo "FLUXCD_WEBHOOK_URL not configured, skipping webhook trigger."
+            echo "FluxCD will pick up changes via polling (interval: 1m)."
+            echo ""
+            echo "To enable push-triggered reconcile:"
+            echo "  1. Create FluxCD Receiver (see clusters/my-cluster/base/receiver.yaml)"
+            echo "  2. Get webhook URL: kubectl get receiver -n flux-system"
+            echo "  3. Add FLUXCD_WEBHOOK_URL and FLUXCD_WEBHOOK_TOKEN to GitHub Secrets"
+            exit 0
+          fi
+
+          echo "Triggering FluxCD reconcile..."
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST \
+            -H "X-GitHub-Event: push" \
+            -H "X-Hub-Signature: sha256=$(echo -n '{}' | openssl dgst -sha256 -hmac '${{ secrets.FLUXCD_WEBHOOK_TOKEN }}' | awk '{print $2}')" \
+            -d '{}' \
+            "${{ secrets.FLUXCD_WEBHOOK_URL }}")
+
+          if [ "$HTTP_STATUS" -eq 200 ]; then
+            echo "FluxCD reconcile triggered successfully (HTTP $HTTP_STATUS)"
+          else
+            echo "Warning: FluxCD webhook returned HTTP $HTTP_STATUS"
+            echo "FluxCD will still pick up changes via polling (interval: 1m)"
+          fi

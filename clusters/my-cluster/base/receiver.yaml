@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: webhook-token
+  namespace: flux-system
+type: Opaque
+stringData:
+  token: <your-webhook-token>  # 替换为实际 token，与 GitHub Secrets 中的 FLUXCD_WEBHOOK_TOKEN 一致
+---
+apiVersion: notification.toolkit.fluxcd.io/v1
+kind: Receiver
+metadata:
+  name: github-push
+  namespace: flux-system
+spec:
+  type: github
+  events:
+    - "ping"
+    - "push"
+  secretRef:
+    name: webhook-token
+  resources:
+    - apiVersion: source.toolkit.fluxcd.io/v1
+      kind: GitRepository
+      name: agentos-infra

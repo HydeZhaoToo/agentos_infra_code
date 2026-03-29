@@ -1,0 +1,80 @@
+name: CI - Helm Lint & Validate
+
+on:
+  pull_request:
+    branches: [main, master]
+    paths:
+      - 'charts/**'
+      - 'agentos/**'
+      - 'clusters/**'
+  push:
+    branches: [main, master]
+    paths:
+      - 'charts/**'
+      - 'agentos/**'
+      - 'clusters/**'
+
+jobs:
+  lint-and-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.17.0
+
+      - name: Lint sub-charts
+        run: |
+          echo "=== Linting PostgreSQL chart ==="
+          helm lint charts/postgresql/
+
+          echo ""
+          echo "=== Linting LiteLLM chart ==="
+          helm lint charts/litellm/
+
+      - name: Update umbrella chart dependencies
+        run: |
+          helm dependency update ./agentos
+
+      - name: Lint umbrella chart
+        run: |
+          helm lint ./agentos
+
+      - name: Template dry-run (dev)
+        run: |
+          helm template agentos ./agentos \
+            -f ./agentos/values-dev.yaml \
+            -n dev > /dev/null
+          echo "dev: OK"
+
+      - name: Template dry-run (staging)
+        run: |
+          helm template agentos ./agentos \
+            -f ./agentos/values-staging.yaml \
+            -n staging > /dev/null
+          echo "staging: OK"
+
+      - name: Template dry-run (production)
+        run: |
+          helm template agentos ./agentos \
+            -f ./agentos/values-production.yaml \
+            -n production > /dev/null
+          echo "production: OK"
+
+      - name: Validate component toggle
+        run: |
+          echo "=== litellm disabled ==="
+          helm template agentos ./agentos \
+            -f ./agentos/values-dev.yaml \
+            --set litellm.enabled=false \
+            -n dev | grep "kind:" | sort | uniq -c
+
+          echo ""
+          echo "=== pgsql-relational disabled ==="
+          helm template agentos ./agentos \
+            -f ./agentos/values-dev.yaml \
+            --set pgsql-relational.enabled=false \
+            -n dev | grep "kind:" | sort | uniq -c

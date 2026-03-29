@@ -142,6 +142,37 @@ kubectl get pods -n dev
 kubectl logs -n dev deploy/agentos-litellm
 ```
 
+## CI/CD
+
+### CI — 自动验证（GitHub Actions）
+
+每次 PR 或 push 到 main 时自动运行：
+
+- Helm lint（所有子 chart + umbrella chart）
+- Template dry-run（dev/staging/production 三个环境）
+- 组件开关验证
+
+配置文件：`.github/workflows/ci.yaml`
+
+### CD — FluxCD 自动部署
+
+采用 **轮询 + Push 触发** 双机制：
+
+| 机制 | 触发方式 | 延迟 | 说明 |
+|------|----------|------|------|
+| 轮询 | FluxCD 每 1m 检查 Git | ~1min | 兜底，确保最终一致性 |
+| Push 触发 | GitHub Actions webhook | ~秒级 | 加速部署，push 后立即 reconcile |
+
+启用 Push 触发需要：
+
+1. 在 K8S 集群部署 FluxCD Receiver（见 `clusters/my-cluster/base/receiver.yaml`）
+2. 获取 webhook URL：`kubectl get receiver github-push -n flux-system`
+3. 在 GitHub repo Settings > Secrets 添加：
+   - `FLUXCD_WEBHOOK_URL` — Receiver webhook 完整 URL
+   - `FLUXCD_WEBHOOK_TOKEN` — webhook 验证 token
+
+配置文件：`.github/workflows/cd-notify-fluxcd.yaml`
+
 ## 新增组件指南
 
 详见 [架构文档](docs/architecture.md) 中的"新增组件流程"章节。
