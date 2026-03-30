@@ -1,9 +1,9 @@
-# Helm
-charts/*/charts/
-charts/*/tmpcharts/
+# Helm - umbrella chart build artifacts
 agentos/charts/
 agentos/tmpcharts/
 agentos/Chart.lock
+# Sub-chart temp files
+charts/*/tmpcharts/
 
 # IDE
 .idea/
