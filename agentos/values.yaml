@@ -11,7 +11,7 @@ litellm:
     enabled: false
 
   externalDatabase:
-    host: "agentos-pgsql-relational"
+    host: ""
     port: 5432
     database: "litellm"
     existingSecret: "pgsql-relational-credentials"

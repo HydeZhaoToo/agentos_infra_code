@@ -52,7 +52,8 @@ Database URL — 根据 postgresql.enabled 决定使用内置或外部数据库
 {{- if .Values.postgresql.enabled }}
 {{- printf "postgresql://postgres:$(DATABASE_PASSWORD)@%s-postgresql:5432/%s" (include "litellm.fullname" .) .Values.postgresql.auth.database }}
 {{- else }}
-{{- printf "postgresql://postgres:$(DATABASE_PASSWORD)@%s:%v/%s" .Values.externalDatabase.host (int .Values.externalDatabase.port) .Values.externalDatabase.database }}
+{{- $host := .Values.externalDatabase.host | default (printf "%s-pgsql-relational" .Release.Name) }}
+{{- printf "postgresql://postgres:$(DATABASE_PASSWORD)@%s:%v/%s" $host (int .Values.externalDatabase.port) .Values.externalDatabase.database }}
 {{- end }}
 {{- end }}
 
