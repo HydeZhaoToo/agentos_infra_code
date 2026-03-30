@@ -3,7 +3,7 @@ charts/*/charts/
 charts/*/tmpcharts/
 agentos/charts/
 agentos/tmpcharts/
-Chart.lock
+agentos/Chart.lock
 
 # IDE
 .idea/
