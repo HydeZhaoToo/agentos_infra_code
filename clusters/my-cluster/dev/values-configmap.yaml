@@ -14,7 +14,7 @@ data:
     litellm:
       replicaCount: 1
       image:
-        repository: docker.litellm.ai/berriai/litellm
+        repository: agentos-dev-registry.cn-shanghai.cr.aliyuncs.com/agentos/litellm-database
         tag: "main-stable"
       env:
         - name: LITELLM_LOCAL_MODEL_COST_MAP
