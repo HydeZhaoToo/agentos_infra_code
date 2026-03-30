@@ -28,6 +28,11 @@ data:
         repository: agentos/postgresql
         tag: "18.3.0"
       primary:
+        containerSecurityContext:
+          enabled: true
+          runAsUser: 1001
+          runAsGroup: 1001
+          readOnlyRootFilesystem: false
         persistence:
           storageClass: alicloud-disk-topology-alltype
           size: 20Gi
