@@ -13,4 +13,5 @@ spec:
         name: agentos-infra
         namespace: flux-system
       reconcileStrategy: Revision
+  timeout: 10m
   values: {}
