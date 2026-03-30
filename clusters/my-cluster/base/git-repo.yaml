@@ -5,8 +5,8 @@ metadata:
   namespace: flux-system
 spec:
   interval: 1m
-  url: https://your-git-server.com/agentos_infra_code.git
+  url: https://codeup.aliyun.com/69c9d859f167bac7fd250e32/HydeZhaoToo/agentos_infra_code.git
   ref:
-    branch: main
+    branch: litellm_dev
   secretRef:
-    name: git-credentials
+    name: codeup-credentials
