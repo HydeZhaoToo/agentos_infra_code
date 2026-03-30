@@ -196,4 +196,3 @@ kubectl create secret generic litellm-secret \
 ## 相关文档
 
 - [架构设计文档](docs/architecture.md) — 整体架构、设计决策、组件关系
-- [设计 Spec](docs/superpowers/specs/2026-03-29-agentos-infra-helm-design.md) — 原始设计讨论记录
