@@ -47,7 +47,6 @@ spec:
             {{- with .Values.env }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
-          {{- if .Values.config }}
           args:
             - "--config"
             - "/app/proxy_config.yaml"
@@ -56,30 +55,36 @@ spec:
               mountPath: /app/proxy_config.yaml
               subPath: config.yaml
               readOnly: true
-          {{- end }}
+          startupProbe:
+            httpGet:
+              path: /health/readiness
+              port: http
+            initialDelaySeconds: 0
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 30
           livenessProbe:
             httpGet:
               path: /health/liveliness
               port: http
-            initialDelaySeconds: 180
-            periodSeconds: 15
+            initialDelaySeconds: 0
+            periodSeconds: 10
             successThreshold: 1
-            failureThreshold: 5
-            timeoutSeconds: 10
+            failureThreshold: 3
+            timeoutSeconds: 5
           readinessProbe:
             httpGet:
               path: /health/readiness
               port: http
-            initialDelaySeconds: 30
-            periodSeconds: 15
+            initialDelaySeconds: 0
+            periodSeconds: 10
             successThreshold: 1
-            failureThreshold: 10
-            timeoutSeconds: 10
+            failureThreshold: 3
+            timeoutSeconds: 5
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-      {{- if .Values.config }}
       volumes:
         - name: config-volume
           configMap:
             name: {{ include "litellm.fullname" . }}-config
-      {{- end }}
