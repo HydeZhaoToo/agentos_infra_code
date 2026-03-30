@@ -5,13 +5,15 @@ metadata:
   namespace: dev
 data:
   values.yaml: |
+    global:
+      imageRegistry: 6alghj85.mirror.aliyuncs.com
+      security:
+        allowInsecureImages: true
     litellm:
       replicaCount: 1
       image:
         repository: docker.litellm.ai/berriai/litellm
         tag: "main-stable"
-      podAnnotations:
-        k8s.aliyun.com/eci-registry-mirror: "https://6alghj85.mirror.aliyuncs.com"
       resources:
         requests:
           cpu: 100m
@@ -21,8 +23,6 @@ data:
           memory: 512Mi
     pgsql-relational:
       primary:
-        podAnnotations:
-          k8s.aliyun.com/eci-registry-mirror: "https://6alghj85.mirror.aliyuncs.com"
         persistence:
           storageClass: alicloud-disk-topology-alltype
           size: 20Gi
