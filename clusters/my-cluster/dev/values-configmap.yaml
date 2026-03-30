@@ -19,6 +19,8 @@ data:
       env:
         - name: LITELLM_LOCAL_MODEL_COST_MAP
           value: "True"
+        - name: PYTHONUNBUFFERED
+          value: "1"
       resources:
         requests:
           cpu: 100m
