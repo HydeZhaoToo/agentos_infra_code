@@ -5,8 +5,15 @@ metadata:
   namespace: dev
 data:
   values.yaml: |
+    global:
+      imageRegistry: m.daocloud.io
+      security:
+        allowInsecureImages: true
     litellm:
       replicaCount: 1
+      image:
+        repository: docker.litellm.ai/berriai/litellm
+        tag: "main-stable"
       resources:
         requests:
           cpu: 100m
