@@ -55,33 +55,25 @@ spec:
               mountPath: /app/proxy_config.yaml
               subPath: config.yaml
               readOnly: true
-          startupProbe:
-            httpGet:
-              path: /health/readiness
-              port: http
-            initialDelaySeconds: 0
-            periodSeconds: 10
-            timeoutSeconds: 5
-            successThreshold: 1
-            failureThreshold: 30
-          livenessProbe:
-            httpGet:
-              path: /health/liveliness
-              port: http
-            initialDelaySeconds: 0
-            periodSeconds: 10
-            successThreshold: 1
-            failureThreshold: 3
-            timeoutSeconds: 5
-          readinessProbe:
-            httpGet:
-              path: /health/readiness
-              port: http
-            initialDelaySeconds: 0
-            periodSeconds: 10
-            successThreshold: 1
-            failureThreshold: 3
-            timeoutSeconds: 5
+          # probes temporarily disabled - re-enable after initial deployment
+          # startupProbe:
+          #   httpGet:
+          #     path: /health/readiness
+          #     port: http
+          #   failureThreshold: 30
+          #   periodSeconds: 10
+          # livenessProbe:
+          #   httpGet:
+          #     path: /health/liveliness
+          #     port: http
+          #   failureThreshold: 3
+          #   periodSeconds: 10
+          # readinessProbe:
+          #   httpGet:
+          #     path: /health/readiness
+          #     port: http
+          #   failureThreshold: 3
+          #   periodSeconds: 10
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
