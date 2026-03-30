@@ -6,7 +6,7 @@ metadata:
 data:
   values.yaml: |
     global:
-      imageRegistry: agentos-dev-registry-vpc.cn-shanghai.cr.aliyuncs.com
+      imageRegistry: agentos-dev-registry.cn-shanghai.cr.aliyuncs.com
       imagePullSecrets:
         - acr-credentials
       security:
