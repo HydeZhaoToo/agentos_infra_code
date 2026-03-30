@@ -17,7 +17,8 @@ data:
     pgsql-relational:
       primary:
         persistence:
-          size: 5Gi
+          storageClass: alicloud-disk-topology-alltype
+          size: 20Gi
         resources:
           requests:
             cpu: 100m
