@@ -5,13 +5,17 @@ metadata:
   namespace: dev
 data:
   values.yaml: |
+    global:
+      imageRegistry: agentos-dev-registry-vpc.cn-shanghai.cr.aliyuncs.com
+      imagePullSecrets:
+        - acr-credentials
+      security:
+        allowInsecureImages: true
     litellm:
       replicaCount: 1
       image:
         repository: docker.litellm.ai/berriai/litellm
         tag: "main-stable"
-      podAnnotations:
-        k8s.aliyun.com/eci-registry-mirror: "https://6alghj85.mirror.aliyuncs.com"
       resources:
         requests:
           cpu: 100m
@@ -20,9 +24,10 @@ data:
           cpu: 500m
           memory: 512Mi
     pgsql-relational:
+      image:
+        repository: agentos/postgresql
+        tag: "18.3.0"
       primary:
-        podAnnotations:
-          k8s.aliyun.com/eci-registry-mirror: "https://6alghj85.mirror.aliyuncs.com"
         persistence:
           storageClass: alicloud-disk-topology-alltype
           size: 20Gi
