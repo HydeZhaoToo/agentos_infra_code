@@ -16,6 +16,9 @@ data:
       image:
         repository: docker.litellm.ai/berriai/litellm
         tag: "main-stable"
+      env:
+        - name: LITELLM_LOCAL_MODEL_COST_MAP
+          value: "True"
       resources:
         requests:
           cpu: 100m
