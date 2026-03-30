@@ -26,7 +26,7 @@ data:
     pgsql-relational:
       image:
         repository: agentos/postgresql
-        tag: "18.3.0"
+        tag: "18.3.0-amd64"
       primary:
         containerSecurityContext:
           enabled: true
