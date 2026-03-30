@@ -2,6 +2,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ../base/helm-release.yaml
+  - values-configmap.yaml
 
 patches:
   - target:
@@ -23,32 +24,3 @@ patches:
         value:
           - kind: ConfigMap
             name: agentos-values-dev
-
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: agentos-values-dev
-  namespace: dev
-data:
-  values.yaml: |
-    litellm:
-      replicaCount: 1
-      resources:
-        requests:
-          cpu: 100m
-          memory: 256Mi
-        limits:
-          cpu: 500m
-          memory: 512Mi
-    pgsql-relational:
-      primary:
-        persistence:
-          size: 5Gi
-        resources:
-          requests:
-            cpu: 100m
-            memory: 256Mi
-          limits:
-            cpu: 500m
-            memory: 512Mi
