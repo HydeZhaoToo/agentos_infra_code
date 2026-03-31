@@ -43,6 +43,8 @@ config: {}
 #        model: openai/gpt-4
 #        api_key: os.environ/OPENAI_API_KEY
 
+imagePullSecrets: []
+
 env: []
 
 ingress:

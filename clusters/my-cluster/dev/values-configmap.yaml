@@ -13,6 +13,8 @@ data:
         allowInsecureImages: true
     litellm:
       replicaCount: 1
+      imagePullSecrets:
+        - name: acr-credentials
       image:
         repository: agentos-dev-registry.cn-shanghai.cr.aliyuncs.com/agentos/litellm-database
         tag: "main-stable"
